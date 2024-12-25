@@ -754,6 +754,7 @@ public class Program
     public int[,] Task_3_5(int[,] matrix, int k)
     {
         // code here
+        if (k < 1 || k > matrix.GetLength(0)) return default(int[,]);
         if (matrix.GetLength(0) != matrix.GetLength(1) || matrix.GetLength(0) < 3) return default(int[,]);
         int ma = matrix[0, 0],ik = -1,jk = -1;
         for(int i = 0;i < matrix.GetLength(0);i++)
@@ -802,33 +803,36 @@ public class Program
     public int[] Task_3_7(int[] A, int[] B, int n)
     {
         int[] answer = default(int[]);
+        int a = A.Length, b = B.Length;
+        if (a != b || b == 0 || a == 0) return answer;
 
+        int[,] GA = new int[n, n], GB = new int[n, n];
+        answer = new int[n * n];
+        int[] answer2 = new int[n * n];
         // code here
-        if (A.Length < 2 || B.Length < 2) return answer;
-        int[,] am = new int[n, n];
-        int[,] bm = new int[n, n];
-        int k = 0;
+        int c = 0;
         for (int i = 0; i < n; i++)
         {
-            for (int j = i; j < n; j++)
+            for (int j = i; j < n; j++, c++)
             {
-                am[i, j] = A[k];
-                am[j, i] = A[k];
-                bm[i, j] = B[k];
-                bm[j, i] = B[k];
-                k++;
+                GA[i, j] = A[c];
+                GA[j, i] = A[c];
+                GB[i, j] = B[c];
+                GB[j, i] = B[c];
             }
         }
-        int[] cm = new int[n * n];
-        int p = 0;
-        for(int c = 0;c < n;c++)
-            for(int i = 0; i < n; i++)
-                for(int j = i;j < n;j++)
+
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                for (int k = 0; k < n; k++)
                 {
-                    cm[p] += am[i, j] * bm[j, c];
+                    answer[i * n + j] += GA[i, k] * GB[k, j];
                 }
-                p++;
-        answer = cm;
+
+            }
+        }
         // end
 
         return answer;
@@ -889,7 +893,38 @@ public class Program
     public int[,] Task_3_9(int[,] matrix)
     {
         // code here
-
+        if (matrix.GetLength(0) != 5 || matrix.GetLength(1) != 7) return default(int[,]);
+        int[] cn = new int[matrix.GetLength(1)];
+        for(int j = 0; j < matrix.GetLength(1);j++)
+            for(int i = 0;i < matrix.GetLength(0);i++)
+            {
+                if (matrix[i, j] < 0) cn[j]++;
+            }
+        int mi = cn[0], imi = 0;
+        for(int j = 0;j < matrix.GetLength(1);j++)
+        {
+            if (cn[j] < mi)
+            {
+                mi = cn[j];
+                imi = j;
+            }
+        }
+        for(int j = 0;j < matrix.GetLength(1)-1;j++)
+            for(int i = 0;i < matrix.GetLength(0)-j-1;j++)
+            {
+                if (cn[i] > cn[i+1])
+                {
+                    for(int k = 0;k < 5;k++)
+                    {
+                        var p = matrix[k, i];
+                        matrix[k, i] = matrix[k, i + 1];
+                        matrix[k, i + 1] = p;
+                    }
+                    var t = cn[i];
+                    cn[i] = cn[i + 1];
+                    cn[i + 1] = t;
+                }
+            }
         // end
 
         return matrix;
